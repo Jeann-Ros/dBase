@@ -30,3 +30,19 @@ void SetDefault(Unidade **U, char dest[3]){
 void ExibirUnidade(Unidade *U){
 	printf("Unidade: %s\n", U->und);
 }
+
+void InserirArquivo(Unidade *U, Arquivo *novoArquivo) {
+	Arquivo *arquivos = U->Arq;
+
+	if (arquivos == NULL) {
+		U->Arq = novoArquivo;
+	} else {
+		while (arquivos->Prox != NULL) {
+			arquivos = arquivos->Prox;
+		}
+
+		arquivos->Prox = novoArquivo;
+		novoArquivo->Ant = arquivos;
+		novoArquivo->Prox = NULL;
+	}
+}

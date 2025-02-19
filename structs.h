@@ -1,4 +1,3 @@
-
 union tipoDados{
 	//N = number | D = date | L = logical | C = character | M = memo
 	float N;
@@ -14,7 +13,7 @@ typedef struct dados Dados;
 
 struct campos{
 	char FieldName[50], Type[2];
-	int Width, Dec; //Width = número de caracteres dos campos | Dec = IDK
+	int Width, Dec; //Width = nï¿½mero de caracteres dos campos | Dec = IDK
 	Dados *Patual, *Pdados;
 	struct campos *Prox;
 };
