@@ -43,6 +43,5 @@ void InserirArquivo(Unidade *U, Arquivo *novoArquivo) {
 
 		arquivos->Prox = novoArquivo;
 		novoArquivo->Ant = arquivos;
-		novoArquivo->Prox = NULL;
 	}
 }

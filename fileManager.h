@@ -17,8 +17,7 @@ void CreateDbfFile(Unidade **unidade, char *fileName){
     novoArquivo->Sts = NULL;
     strcpy(novoArquivo->Data, date);
     strcpy(novoArquivo->Hora, timeStr);
-    novoArquivo->Prox = NULL;
-    novoArquivo->Ant = NULL;
+    novoArquivo->Ant = novoArquivo->Prox = NULL;
 
     InserirArquivo(*unidade, novoArquivo);
 }
@@ -34,19 +33,24 @@ void CreateFileFields(Arquivo **file) {
         printf("Criacao de campos para o arquivo %s\n", (*file)->NomeDBF);
 
         printf("Digite o nome do campo: ");
+        fflush(stdin);
         gets(fieldName);
 
         printf("Digite o tipo do campo: ");
+        fflush(stdin);
         gets(fieldType);
 
         printf("Digite a largura do campo: ");
+        fflush(stdin);
         scanf("%d", &width);
 
         printf("Digite o numero de casas decimais: ");
+        fflush(stdin);
         scanf("%d", &dec);
 
         Campos *campos = (Campos*)malloc(sizeof(Campos));
 
+        // acho que vai dar errado já que não estamos validando se já existe campos ou não. Precisamos fazer o ligamento do Prox.
         strcpy(campos->FieldName, fieldName);
         strcpy(campos->Type, fieldType);
         campos->Width = width;

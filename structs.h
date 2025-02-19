@@ -13,7 +13,7 @@ typedef struct dados Dados;
 
 struct campos{
 	char FieldName[50], Type[2];
-	int Width, Dec; //Width = n�mero de caracteres dos campos | Dec = IDK
+	int Width, Dec; //Width = n�mero de caracteres dos campos | Dec = numero de casas decimais
 	Dados *Patual, *Pdados;
 	struct campos *Prox;
 };
