@@ -17,11 +17,16 @@ void Init(Unidade **U){
 }
 
 void SetDefault(Unidade **U, char dest[3]){
+
 	if(strcmp((*U)->und, dest) != 0){
-		if(strcmp((*U)->und, "D:")){
+		if(strcmp((*U)->und, "D:") == 0){
 			*U = (*U)->bottom;
 		}else{
 			*U = (*U)->top;
 		}
 	}
+}
+
+void ExibirUnidade(Unidade *U){
+	printf("Unidade: %s\n", U->und);
 }
