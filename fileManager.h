@@ -1,3 +1,55 @@
+void CreateFileFields(Arquivo **file) {
+    // todo testar e aprimorar
+    char fieldName[50];
+    char fieldType[50];
+    int width;
+    int dec;
+    char resp[2];
+    do {
+        printf("Criacao de campos para o arquivo %s\n", (*file)->NomeDBF);
+
+        printf("Digite o nome do campo: ");
+        fflush(stdin);
+        gets(fieldName);
+
+        printf("Digite o tipo do campo N/D/L/C/M: ");
+        fflush(stdin);
+        gets(fieldType);
+
+        printf("Digite a largura do campo: ");
+        fflush(stdin);
+        scanf("%d", &width);
+
+        Campos *campos = (Campos*)malloc(sizeof(Campos));
+
+        strcpy(campos->FieldName, fieldName);
+        strcpy(campos->Type, fieldType);
+        campos->Width = width;
+
+        if (strcmp(fieldType, "N") == 0) {
+            printf("Digite o numero de casas decimais: ");
+            fflush(stdin);
+            scanf("%d", &dec);
+            campos->Dec = dec;
+        }
+        else
+            campos->Dec = 0;
+
+        campos->Patual = NULL;
+        campos->Pdados = NULL;
+        campos->Prox = NULL;
+
+        InserirCampoDoArquivo(&(*file), campos);
+
+        printf("Deseja adicionar mais campos Y/N?: ");
+        fflush(stdin);
+        gets(resp);
+    }
+    while (strcmp(resp, "Y") == 0);
+
+    ExibirCamposDoArquivo(*file);
+}
+
 void CreateDbfFile(Unidade **unidade, char *fileName){
     time_t now;
     struct tm *local;
@@ -13,57 +65,13 @@ void CreateDbfFile(Unidade **unidade, char *fileName){
     Arquivo *novoArquivo = (Arquivo*)malloc(sizeof(Arquivo));
 
     strcpy(novoArquivo->NomeDBF, fileName);
-    novoArquivo->Cmp = NULL;
+    CreateFileFields(&novoArquivo);
     novoArquivo->Sts = NULL;
     strcpy(novoArquivo->Data, date);
     strcpy(novoArquivo->Hora, timeStr);
     novoArquivo->Ant = novoArquivo->Prox = NULL;
 
     InserirArquivo(*unidade, novoArquivo);
-}
-
-void CreateFileFields(Arquivo **file) {
-    // todo testar e aprimorar
-    char fieldName[50];
-    char fieldType[50];
-    int width;
-    int dec;
-    char resp[2];
-    do {
-        printf("Criacao de campos para o arquivo %s\n", (*file)->NomeDBF);
-
-        printf("Digite o nome do campo: ");
-        fflush(stdin);
-        gets(fieldName);
-
-        printf("Digite o tipo do campo: ");
-        fflush(stdin);
-        gets(fieldType);
-
-        printf("Digite a largura do campo: ");
-        fflush(stdin);
-        scanf("%d", &width);
-
-        printf("Digite o numero de casas decimais: ");
-        fflush(stdin);
-        scanf("%d", &dec);
-
-        Campos *campos = (Campos*)malloc(sizeof(Campos));
-
-        // acho que vai dar errado já que não estamos validando se já existe campos ou não. Precisamos fazer o ligamento do Prox.
-        strcpy(campos->FieldName, fieldName);
-        strcpy(campos->Type, fieldType);
-        campos->Width = width;
-        campos->Dec = dec;
-        campos->Patual = NULL;
-        campos->Pdados = NULL;
-        campos->Prox = NULL;
-
-        printf("Deseja adicionar mais campos Y/N?: ");
-        fflush(stdin);
-        gets(resp);
-    }
-    while (strcmp(resp, "Y") == 0);
 }
 
 void ListFiles(Unidade *U){
@@ -76,5 +84,20 @@ void ListFiles(Unidade *U){
             printf("%s \t %s \t %s \n", arquivos->NomeDBF, arquivos->Data, arquivos->Hora);
             arquivos = arquivos->Prox;
         }
+    }
+}
+
+void OpenFile(Unidade *u, char *fileName, Arquivo **arqAberto) {
+    Arquivo *arquivos = u->Arq;
+
+    while (arquivos != NULL && strcmp(arquivos->NomeDBF, fileName) != 0) {
+        arquivos = arquivos->Prox;
+    }
+
+    if (arquivos == NULL)
+        printf("Arquivo nao encontrado\n");
+    else {
+        printf("Arquivo %s Carregado\n", arquivos->NomeDBF);
+        *arqAberto = arquivos;
     }
 }

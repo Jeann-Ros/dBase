@@ -4,6 +4,7 @@
 #include <time.h>
 #include "structs.h"
 #include "tadUnidade.h"
+#include "tadArquivo.h"
 #include "linhasManager.h"
 #include "fileManager.h"
 
@@ -35,6 +36,12 @@ void interpretarComando(char command[50][50], Unidade **unidade, Arquivo **arqAb
 	if (strcmp(command[0] , "DIR") == 0) {
 		ListFiles(*unidade);
 	}
+
+	if (strcmp(command[0] , "USE") == 0) {
+		OpenFile(*unidade, command[1], &(*arqAberto));
+	}
+
+
 }
 
 int main(){
@@ -60,5 +67,4 @@ int main(){
 	#endif
 
 	return 0;
-
 }
