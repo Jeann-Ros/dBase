@@ -41,7 +41,13 @@ void interpretarComando(char command[50][50], Unidade **unidade, Arquivo **arqAb
 		OpenFile(*unidade, command[1], &(*arqAberto));
 	}
 
-
+	if (strcmp(command[0], "APPEND") == 0) {
+		if (*arqAberto == NULL) {
+			printf("Nenhum arquivo aberto\n");
+		} else {
+			AppendData(*arqAberto);
+		}
+	}
 }
 
 int main(){

@@ -20,7 +20,7 @@ struct campos{
 typedef struct campos Campos;
 
 struct status{
-	char Val[2]; // 0 = True | Qualquer outro valor = False
+	char Val[2]; // 1 = True | 0 = False
 	struct status *Prox;
 };
 typedef struct status Status;

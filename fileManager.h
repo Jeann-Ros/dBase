@@ -1,5 +1,5 @@
 void CreateFileFields(Arquivo **file) {
-    // todo testar e aprimorar
+    // todo melhorar interface
     char fieldName[50];
     char fieldType[50];
     int width;
@@ -16,28 +16,29 @@ void CreateFileFields(Arquivo **file) {
         fflush(stdin);
         gets(fieldType);
 
-        printf("Digite a largura do campo: ");
-        fflush(stdin);
-        scanf("%d", &width);
-
         Campos *campos = (Campos*)malloc(sizeof(Campos));
 
         strcpy(campos->FieldName, fieldName);
         strcpy(campos->Type, fieldType);
-        campos->Width = width;
 
         if (strcmp(fieldType, "N") == 0) {
             printf("Digite o numero de casas decimais: ");
             fflush(stdin);
             scanf("%d", &dec);
             campos->Dec = dec;
+            campos->Width = 0;
         }
-        else
+        else {
+            printf("Digite a largura do campo: ");
+            fflush(stdin);
+            scanf("%d", &width);
             campos->Dec = 0;
+        }
 
         campos->Patual = NULL;
         campos->Pdados = NULL;
         campos->Prox = NULL;
+
 
         InserirCampoDoArquivo(&(*file), campos);
 
@@ -99,5 +100,47 @@ void OpenFile(Unidade *u, char *fileName, Arquivo **arqAberto) {
     else {
         printf("Arquivo %s Carregado\n", arquivos->NomeDBF);
         *arqAberto = arquivos;
+    }
+}
+
+void AppendData(Arquivo *arqAberto) {
+    Campos *campos = arqAberto->Cmp;
+    Dados *dado = (Dados*)malloc(sizeof(Dados));
+    dado->Prox = NULL;
+
+    printf("Iniciando insercao de dados no arquivo %s\n",arqAberto->NomeDBF);
+    while (campos != NULL) {
+        printf("Digite o campo: %s do tipo %s e tamanho %d\n", campos->FieldName, campos->Type, campos->Width);
+
+        if (campos->Type[0] == 'N') {
+            fflush(stdin);
+            scanf("%f", &dado->valType.N);
+        }
+
+        if (campos->Type[0] == 'D') {
+            fflush(stdin);
+            gets(dado->valType.D);
+        }
+
+        if (campos->Type[0] == 'L') {
+            fflush(stdin);
+            gets(dado->valType.L);
+        }
+
+        if (campos->Type[0] == 'C') {
+            fflush(stdin);
+            gets(dado->valType.C);
+        }
+
+        if (campos->Type[0] == 'M') {
+            fflush(stdin);
+            gets(dado->valType.M);
+        }
+
+        InserirDado(&campos, dado);
+        InserirStatus(&arqAberto);
+        ExibirDados(campos);
+        campos = campos->Prox;
+        dado = (Dados*)malloc(sizeof(Dados));
     }
 }
