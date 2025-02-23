@@ -7,6 +7,7 @@
 #include "tadArquivo.h"
 #include "linhasManager.h"
 #include "fileManager.h"
+#include "mockFunctions.h"
 
 char validarNomeNovoArquivo(char *nomeArquivo) {
 	if(strlen(nomeArquivo) > 50){
@@ -22,30 +23,35 @@ char validarNomeNovoArquivo(char *nomeArquivo) {
 	return 1;
 }
 
-void interpretarComando(char command[50][50], Unidade **unidade, Arquivo **arqAberto){
+void interpretarComando(char command[50][50], Unidade **unidade, Arquivo **arqAberto, char devMode){
     if(strcmp(command[0], "SET") == 0 && strcmp(command[1], "DEFAULT") == 0 && strcmp(command[2], "TO") == 0) {
 	    SetDefault(&(*unidade), command[3]);
-    	ExibirUnidade(*unidade);
+    	return ExibirUnidade(*unidade);
     }
 
 	if (strcmp(command[0], "CREATE") == 0) {
+		if (devMode) {
+			return MockCreateDbfFile(&(*unidade));
+		}
+
 		if(validarNomeNovoArquivo(command[1]))
-			CreateDbfFile(&(*unidade), command[1]);
+			return CreateDbfFile(&(*unidade), command[1]);
+
 	}
 
 	if (strcmp(command[0] , "DIR") == 0) {
-		ListFiles(*unidade);
+		return ListFiles(*unidade);
 	}
 
 	if (strcmp(command[0] , "USE") == 0) {
-		OpenFile(*unidade, command[1], &(*arqAberto));
+		return OpenFile(*unidade, command[1], &(*arqAberto));
 	}
 
 	if (strcmp(command[0], "APPEND") == 0) {
 		if (*arqAberto == NULL) {
 			printf("Nenhum arquivo aberto\n");
 		} else {
-			AppendData(*arqAberto);
+			return AppendData(*arqAberto);
 		}
 	}
 
@@ -53,7 +59,7 @@ void interpretarComando(char command[50][50], Unidade **unidade, Arquivo **arqAb
 		if (*arqAberto == NULL) {
 			printf("Nenhum arquivo aberto\n");
 		}else {
-			ExibirCamposDoArquivo(*arqAberto);
+			return ExibirCamposDoArquivo(*arqAberto);
 		}
 	}
 
@@ -61,7 +67,7 @@ void interpretarComando(char command[50][50], Unidade **unidade, Arquivo **arqAb
 		if (*arqAberto == NULL) {
 			printf("Nenhum arquivo aberto\n");
 		}else {
-			LocalizarRegistro(&(*arqAberto), atoi(command[1]));
+			return LocalizarRegistro(&(*arqAberto), atoi(command[1]));
 		}
 	}
 
@@ -69,7 +75,15 @@ void interpretarComando(char command[50][50], Unidade **unidade, Arquivo **arqAb
 		if (*arqAberto == NULL) {
 			printf("Nenhum arquivo aberto\n");
 		}else {
-			MostrarRegistro(*arqAberto);
+			return MostrarRegistro(*arqAberto);
+		}
+	}
+
+	if (strcmp(command[0], "LIST") == 0) {
+		if (*arqAberto == NULL) {
+			printf("Nenhum arquivo aberto\n");
+		}else {
+			return ListFileData(*arqAberto);
 		}
 	}
 }
@@ -77,6 +91,7 @@ void interpretarComando(char command[50][50], Unidade **unidade, Arquivo **arqAb
 int main(){
 
 	Unidade *U;
+	char devMode = 1;
 	char userInput[120];
 	char command[50][50];
 	Arquivo *arqAberto = NULL;
@@ -87,7 +102,7 @@ int main(){
 		fflush(stdin);
 		gets(userInput);
 		SalvarComando(command, userInput);
-		interpretarComando(command, &U, &arqAberto);
+		interpretarComando(command, &U, &arqAberto, devMode);
 	}
 
 	#ifdef _WIN32
