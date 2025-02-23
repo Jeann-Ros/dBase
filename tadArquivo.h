@@ -57,26 +57,17 @@ void InserirStatus(Arquivo **file) {
     }
 }
 
-void ExibirDados(Campos *campo) {
-    Dados *dados = campo->Pdados;
-    int cont = 1;
-
-    printf("DADOS DO CAMPO %s do tipo %s \n", campo->FieldName, campo->Type);
-    while (dados != NULL) {
-        if (campo->Type[0] == 'N')
-            printf("%d \t %.2f\n", cont, dados->valType.N);
-        if (campo->Type[0] == 'D')
-            printf("%d \t %s\n", cont, dados->valType.D);
-        if (campo->Type[0] == 'L')
-            printf("%d \t %s\n", cont, dados->valType.L);
-        if (campo->Type[0] == 'C')
-            printf("%d \t %s\n", cont, dados->valType.C);
-        if (campo->Type[0] == 'M')
-            printf("%d \t %s\n", cont, dados->valType.M);
-
-        dados = dados->Prox;
-        cont++;
-    }
+void ExibirDadosFormatados(Campos *campo, Dados *dados) {
+    if (campo->Type[0] == 'N')
+        printf("%.2f", dados->valType.N);
+    if (campo->Type[0] == 'D')
+        printf("%s", dados->valType.D);
+    if (campo->Type[0] == 'L')
+        printf("%s", dados->valType.L);
+    if (campo->Type[0] == 'C')
+        printf("%s", dados->valType.C);
+    if (campo->Type[0] == 'M')
+        printf("%s", dados->valType.M);
 }
 
 void LocalizarRegistro(Arquivo **file, int pos) {
@@ -194,4 +185,27 @@ void EditarRegistro(Arquivo **file) {
             campos = campos->Prox;
         }
     }
+}
+
+void ExibirCabecalhoArquivo(Arquivo *file) {
+    printf("RECORD#\t");
+    Campos *campos = file->Cmp;
+    while (campos != NULL) {
+        printf("%s\t", campos->FieldName);
+        campos = campos->Prox;
+    }
+    printf("\n");
+}
+
+int QuantidadeDeRegistros(Arquivo *file) {
+    int cont = 0;
+    Campos *campos = file->Cmp;
+    Dados *dados = campos->Pdados;
+
+    while (dados != NULL) {
+        cont++;
+        dados = dados->Prox;
+    }
+
+    return cont;
 }

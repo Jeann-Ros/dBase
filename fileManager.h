@@ -140,9 +140,40 @@ void AppendData(Arquivo *arqAberto) {
 
         InserirDado(&campos, dado);
         InserirStatus(&arqAberto);
-        ExibirDados(campos);
         campos = campos->Prox;
         dado = (Dados*)malloc(sizeof(Dados));
         dado->Prox = NULL;
+    }
+}
+
+void ListFileData(Arquivo *arqAberto) {
+    int aux = 1;
+    int auxCont;
+    int arquivoCount = QuantidadeDeRegistros(arqAberto);
+
+    Campos *campos = NULL;
+    Dados *dados = NULL;
+    ExibirCabecalhoArquivo(arqAberto);
+
+    while (aux <= arquivoCount) {
+        auxCont = 1;
+        campos = arqAberto->Cmp;
+        printf("%d\t", aux);
+
+        while (campos != NULL) {
+            dados = campos->Pdados;
+
+            while (auxCont < aux) {
+                dados = dados->Prox;
+                auxCont++;
+            }
+
+            ExibirDadosFormatados(campos, dados);
+            printf("\t");
+
+            campos = campos->Prox;
+        }
+        printf("\n");
+        aux++;
     }
 }
