@@ -48,6 +48,30 @@ void interpretarComando(char command[50][50], Unidade **unidade, Arquivo **arqAb
 			AppendData(*arqAberto);
 		}
 	}
+
+	if (strcmp(command[0], "LIST") == 0 && strcmp(command[1], "STRUCTURE") == 0) {
+		if (*arqAberto == NULL) {
+			printf("Nenhum arquivo aberto\n");
+		}else {
+			ExibirCamposDoArquivo(*arqAberto);
+		}
+	}
+
+	if (strcmp(command[0], "GOTO") == 0) {
+		if (*arqAberto == NULL) {
+			printf("Nenhum arquivo aberto\n");
+		}else {
+			LocalizarRegistro(&(*arqAberto), atoi(command[1]));
+		}
+	}
+
+	if (strcmp(command[0], "DISPLAY") == 0) {
+		if (*arqAberto == NULL) {
+			printf("Nenhum arquivo aberto\n");
+		}else {
+			MostrarRegistro(*arqAberto);
+		}
+	}
 }
 
 int main(){

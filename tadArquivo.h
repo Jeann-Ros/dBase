@@ -16,7 +16,7 @@ void ExibirCamposDoArquivo(Arquivo *file) {
 
     printf("NOME DO CAMPO \t TIPO \t LARGURA \t DECIMAIS\n");
     while (campo != NULL) {
-        printf("%s \t %s \t %d \t %d\n", campo->FieldName, campo->Type, campo->Width, campo->Dec);
+        printf("%s \t \t %s \t %d \t \t %d\n", campo->FieldName, campo->Type, campo->Width, campo->Dec);
         campo = campo->Prox;
     }
 }
@@ -76,5 +76,59 @@ void ExibirDados(Campos *campo) {
 
         dados = dados->Prox;
         cont++;
+    }
+}
+
+void LocalizarRegistro(Arquivo **file, int pos) {
+    Campos *campos = (*file)->Cmp;
+    int init = 1;
+    char flag = '0';
+
+    if (campos == NULL) {
+        printf("Nenhum campo localizado no arquivo.\n");
+    }else {
+        while (campos != NULL && flag == '0') {
+            campos->Patual = campos->Pdados;
+            init = 1;
+            if (campos->Pdados == NULL) {
+                flag = '1';
+                printf("Nenhum registro localizado no arquivo.\n");
+            }else {
+                while (init<pos && campos->Patual -> Prox != NULL) {
+                    init++;
+                    campos->Patual = campos->Patual->Prox;
+                }
+            }
+            campos = campos->Prox;
+        }
+    }
+}
+
+void MostrarRegistro(Arquivo *file) {
+    //incluir lógica para mostrar número da linha do registro
+    Campos *campos = file->Cmp, *fields = file->Cmp;
+    char format[20];
+    if (campos == NULL) {
+        printf("Nenhum campo localizado no arquivo.\n");
+    }else {
+        while (fields != NULL) {
+            printf("%s \t", fields->FieldName);
+            fields = fields->Prox;
+        }
+        printf("\n");
+        while (campos != NULL) {
+            if (campos->Type[0] == 'N')
+                printf("%.2f \t", campos->Patual->valType.N);
+            if (campos->Type[0] == 'D')
+                printf("%s \t", campos->Patual->valType.D);
+            if (campos->Type[0] == 'L')
+                printf("%s \t", campos->Patual->valType.L);
+            if (campos->Type[0] == 'C')
+                printf("%s \t", campos->Patual->valType.C);
+            if (campos->Type[0] == 'M')
+                printf("%s \t",  campos->Patual->valType.M);
+            campos = campos->Prox;
+        }
+        printf("\n");
     }
 }

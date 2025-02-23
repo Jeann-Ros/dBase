@@ -32,6 +32,7 @@ void CreateFileFields(Arquivo **file) {
             printf("Digite a largura do campo: ");
             fflush(stdin);
             scanf("%d", &width);
+            campos->Width = width;
             campos->Dec = 0;
         }
 
@@ -48,7 +49,6 @@ void CreateFileFields(Arquivo **file) {
     }
     while (strcmp(resp, "Y") == 0);
 
-    ExibirCamposDoArquivo(*file);
 }
 
 void CreateDbfFile(Unidade **unidade, char *fileName){
@@ -66,6 +66,7 @@ void CreateDbfFile(Unidade **unidade, char *fileName){
     Arquivo *novoArquivo = (Arquivo*)malloc(sizeof(Arquivo));
 
     strcpy(novoArquivo->NomeDBF, fileName);
+    novoArquivo->Cmp = NULL;
     CreateFileFields(&novoArquivo);
     novoArquivo->Sts = NULL;
     strcpy(novoArquivo->Data, date);
@@ -110,7 +111,7 @@ void AppendData(Arquivo *arqAberto) {
 
     printf("Iniciando insercao de dados no arquivo %s\n",arqAberto->NomeDBF);
     while (campos != NULL) {
-        printf("Digite o campo: %s do tipo %s e tamanho %d\n", campos->FieldName, campos->Type, campos->Width);
+        printf("Digite o valor do campo: %s do tipo %s e tamanho %d\n", campos->FieldName, campos->Type, campos->Width);
 
         if (campos->Type[0] == 'N') {
             fflush(stdin);
@@ -142,5 +143,6 @@ void AppendData(Arquivo *arqAberto) {
         ExibirDados(campos);
         campos = campos->Prox;
         dado = (Dados*)malloc(sizeof(Dados));
+        dado->Prox = NULL;
     }
 }
