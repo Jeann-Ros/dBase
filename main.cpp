@@ -72,6 +72,14 @@ void interpretarComando(char command[50][50], Unidade **unidade, Arquivo **arqAb
 			MostrarRegistro(*arqAberto);
 		}
 	}
+
+	if (strcmp(command[0], "EDIT") == 0) {
+		if (*arqAberto == NULL) {
+			printf("Nenhum arquivo aberto\n");
+		}else {
+			EditarRegistro(&(*arqAberto));
+		}
+	}
 }
 
 int main(){

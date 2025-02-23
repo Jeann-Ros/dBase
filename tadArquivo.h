@@ -98,8 +98,8 @@ void LocalizarRegistro(Arquivo **file, int pos) {
                     init++;
                     campos->Patual = campos->Patual->Prox;
                 }
+                campos = campos->Prox;
             }
-            campos = campos->Prox;
         }
     }
 }
@@ -130,5 +130,68 @@ void MostrarRegistro(Arquivo *file) {
             campos = campos->Prox;
         }
         printf("\n");
+    }
+}
+
+void EditarRegistro(Arquivo **file) {
+    Campos *campos = (*file)->Cmp;
+    char input[50];
+    float valorF;
+
+    printf("Iniciando edicao de campos.\n");
+    while (campos != NULL) {
+        if (campos->Patual == NULL) {
+            printf("Nenhum registro foi selecionado no arquivo.\n");
+        }else {
+            char valorS[campos->Width];
+            printf("Campo %s\n", campos->FieldName);
+            if (campos->Type[0] == 'N') {
+                valorF = campos->Patual->valType.N;
+                printf("Valor atual: %.2f\n", campos->Patual->valType.N);
+                printf("Novo valor: ");
+                fflush(stdin);
+                fgets(input, sizeof(input), stdin);
+                if (sscanf(input, "%f", &valorF) != 1){};
+                campos->Patual->valType.N = valorF;
+            }
+            if (campos->Type[0] == 'D') {
+                printf("Valor atual: %s\n", campos->Patual->valType.D);
+                printf("Novo valor: ");
+                fflush(stdin);
+                gets(valorS);
+                if (strlen(valorS) > 0) {
+                    strcpy(campos->Patual->valType.D, valorS);
+                }
+            }
+            if (campos->Type[0] == 'L') {
+                printf("Valor atual: %s\n", campos->Patual->valType.L);
+                printf("Novo valor: ");
+                fflush(stdin);
+                gets(valorS);
+                if (strlen(valorS) > 0) {
+                    strcpy(campos->Patual->valType.L, valorS);
+                }
+            }
+            if (campos->Type[0] == 'C') {
+                printf("Valor atual: %s\n", campos->Patual->valType.C);
+                printf("Novo valor: ");
+                fflush(stdin);
+                gets(valorS);
+                if (strlen(valorS) > 0) {
+                    strcpy(campos->Patual->valType.C, valorS);
+                }
+            }
+            if (campos->Type[0] == 'M') {
+                printf("Valor atual: %s\n",  campos->Patual->valType.M);
+                printf("Novo valor: ");
+                fflush(stdin);
+                gets(valorS);
+                if (strlen(valorS) > 0) {
+                    strcpy(campos->Patual->valType.M, valorS);
+                }
+            }
+
+            campos = campos->Prox;
+        }
     }
 }
