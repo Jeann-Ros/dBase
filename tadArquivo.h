@@ -209,3 +209,30 @@ int QuantidadeDeRegistros(Arquivo *file) {
 
     return cont;
 }
+
+void ExcludeRegRec(Dados **dados) {
+    if (*dados != NULL) {
+        ExcludeRegRec(&(*dados)->Prox);
+        free(*dados);
+    }
+}
+
+void ExcludeStsRec(Status **status) {
+    if (*status != NULL) {
+        ExcludeStsRec(&(*status)->Prox);
+        free(*status);
+    }
+}
+
+void ExcluirRegistrosZap(Arquivo **file) {
+    Campos *campos = (*file)->Cmp;
+
+    while (campos != NULL) {
+        ExcludeRegRec(&campos->Pdados);
+        campos->Pdados = NULL;
+        campos->Patual = NULL;
+        campos = campos->Prox;
+    }
+    ExcludeStsRec(&(*file)->Sts);
+    (*file)->Sts = NULL;
+}

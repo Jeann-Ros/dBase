@@ -94,12 +94,20 @@ void interpretarComando(char command[50][50], Unidade **unidade, Arquivo **arqAb
 			EditarRegistro(&(*arqAberto));
 		}
 	}
+
+	if (strcmp(command[0], "ZAP") == 0) {
+		if (*arqAberto == NULL) {
+			printf("Nenhum arquivo aberto\n");
+		}else {
+			ExcluirRegistrosZap(&(*arqAberto));
+		}
+	}
 }
 
 int main(){
 
 	Unidade *U;
-	char devMode = 1;
+	char devMode = 0;
 	char userInput[120];
 	char command[50][50];
 	Arquivo *arqAberto = NULL;
