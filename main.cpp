@@ -23,12 +23,42 @@ char validarNomeNovoArquivo(char *nomeArquivo) {
 	return 1;
 }
 
+char validarValorDeBusca(char *valorBusca) {
+	if (valorBusca[0] == '"' && valorBusca[strlen(valorBusca) - 1] == '"')
+		return 1;
+	return 0;
+}
+
+void removeQuotes(char *str) {
+	int i, j = 0;
+	for (i = 0; str[i] != '\0'; i++) {
+		if (str[i] != '"') {
+			str[j++] = str[i];
+		}
+	}
+	str[j] = '\0';
+}
+
 void interpretarComando(char command[50][50], Unidade **unidade, Arquivo **arqAberto, char devMode){
     if(strcmp(command[0], "SET") == 0 && strcmp(command[1], "DEFAULT") == 0 && strcmp(command[2], "TO") == 0) {
 	    SetDefault(&(*unidade), command[3]);
     	return ExibirUnidade(*unidade);
     }
 
+	if (strcmp(command[0], "LIST") == 0 && strcmp(command[1], "FOR") == 0 && strcmp(command[3], "=") == 0 ) {
+		if (*arqAberto == NULL) {
+			printf("Nenhum arquivo aberto\n");
+		}else if (validarValorDeBusca(command[4])) {
+			removeQuotes(command[4]);
+			return SearchForFieldValue(command[2], command[4], *arqAberto);
+		}
+		else{
+			printf("Valor de buscas invalido\n");
+		}
+	}
+
+	// "macacos loucos"
+	// considerar nomes com espaco
 	if (strcmp(command[0], "CREATE") == 0) {
 		if (devMode) {
 			return MockCreateDbfFile(&(*unidade));
@@ -36,7 +66,6 @@ void interpretarComando(char command[50][50], Unidade **unidade, Arquivo **arqAb
 
 		if(validarNomeNovoArquivo(command[1]))
 			return CreateDbfFile(&(*unidade), command[1]);
-
 	}
 
 	if (strcmp(command[0] , "DIR") == 0) {
@@ -91,7 +120,7 @@ void interpretarComando(char command[50][50], Unidade **unidade, Arquivo **arqAb
 		if (*arqAberto == NULL) {
 			printf("Nenhum arquivo aberto\n");
 		}else {
-			EditarRegistro(&(*arqAberto));
+			return EditarRegistro(&(*arqAberto));
 		}
 	}
 
@@ -99,7 +128,7 @@ void interpretarComando(char command[50][50], Unidade **unidade, Arquivo **arqAb
 		if (*arqAberto == NULL) {
 			printf("Nenhum arquivo aberto\n");
 		}else {
-			ExcluirRegistrosZap(&(*arqAberto));
+			return ExcluirRegistrosZap(&(*arqAberto));
 		}
 	}
 }
@@ -107,7 +136,7 @@ void interpretarComando(char command[50][50], Unidade **unidade, Arquivo **arqAb
 int main(){
 
 	Unidade *U;
-	char devMode = 0;
+	char devMode = 1;
 	char userInput[120];
 	char command[50][50];
 	Arquivo *arqAberto = NULL;

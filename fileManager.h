@@ -177,3 +177,60 @@ void ListFileData(Arquivo *arqAberto) {
         aux++;
     }
 }
+
+Campos* FindFileField(Arquivo *arq, char *fieldName) {
+    Campos *campos = arq->Cmp;
+
+    while (campos != NULL && strcmp(campos->FieldName, fieldName) != 0) {
+        campos = campos->Prox;
+    }
+
+    return campos;
+}
+
+void SearchForFieldValue(char *fieldName, char *searchText, Arquivo *arqAberto) {
+    Campos *campo = FindFileField(arqAberto, fieldName);
+    int posicao_dado = 0;
+    int aux = 0;
+
+    if (campo == NULL) {
+        printf("Campo nao encontrado\n");
+        return;
+    }
+
+    if (campo->Type[0] != 'C') {
+        printf("Campo nao e do tipo Caractere\n");
+        return;
+    }
+
+    Dados *dados = campo->Pdados;
+    while (dados != NULL && strcmp(dados->valType.C, searchText) != 0) {
+        dados = dados->Prox;
+        posicao_dado++;
+    }
+
+    if (dados == NULL) {
+        printf("Nenhum registro encontrado\n");
+        return;
+    }
+
+    ExibirCabecalhoArquivo(arqAberto);
+    printf("%d\t", posicao_dado + 1);
+    while (campo != NULL) {
+        aux = 0;
+        dados = campo->Pdados;
+        while (aux < posicao_dado) {
+            dados = dados->Prox;
+            aux++;
+        }
+
+        if (aux == posicao_dado) {
+            ExibirDadosFormatados(campo, dados);
+            printf("\t");
+        }
+        printf("\n");
+
+        campo = campo->Prox;
+    }
+
+}

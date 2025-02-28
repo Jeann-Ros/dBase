@@ -1,12 +1,28 @@
-void SepararLinha(char listaComando[50][50], char comando[50]){
+void SepararLinha(char listaComando[50][50], const char* comando) {
     int i = 0, j = 0, k = 0;
 
-    while(comando[i] != '\0'){
-        if(comando[i] == ' '){
+    while (comando[i] != '\0') {
+        if (comando[i] == ' ') {
             listaComando[j][k] = '\0';
             j++;
             k = 0;
-        }else{
+        } else if (comando[i] == '"') {
+            listaComando[j][k] = comando[i];
+            k++;
+            i++;
+            while (comando[i] != '"' && comando[i] != '\0') {
+                listaComando[j][k] = comando[i];
+                k++;
+                i++;
+            }
+            if (comando[i] == '"') {
+                listaComando[j][k] = comando[i];
+                k++;
+            }
+            listaComando[j][k] = '\0';
+            j++;
+            k = 0;
+        } else {
             listaComando[j][k] = comando[i];
             k++;
         }
@@ -14,6 +30,9 @@ void SepararLinha(char listaComando[50][50], char comando[50]){
     }
     listaComando[j][k] = '\0';
 }
+// list for nome = "macaco"
+// list\0
+//
 
 void ZerarListaComando(char command[50][50]){
     for(int i = 0; i < 50; i++){
