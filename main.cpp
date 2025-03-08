@@ -39,7 +39,7 @@ void removeQuotes(char *str) {
 	str[j] = '\0';
 }
 
-void interpretarComando(char command[50][50], Unidade **unidade, Arquivo **arqAberto, char devMode){
+void interpretarComando(char command[50][50], Unidade **unidade, Arquivo **arqAberto, char devMode, Status **status, int *setDeleted){
     if(strcmp(command[0], "SET") == 0 && strcmp(command[1], "DEFAULT") == 0 && strcmp(command[2], "TO") == 0) {
 	    SetDefault(&(*unidade), command[3]);
     	return ExibirUnidade(*unidade);
@@ -96,7 +96,7 @@ void interpretarComando(char command[50][50], Unidade **unidade, Arquivo **arqAb
 		if (*arqAberto == NULL) {
 			printf("Nenhum arquivo aberto\n");
 		}else {
-			return LocalizarRegistro(&(*arqAberto), atoi(command[1]));
+			return LocalizarRegistro(&(*arqAberto), atoi(command[1]), &(*status));
 		}
 	}
 
@@ -112,7 +112,7 @@ void interpretarComando(char command[50][50], Unidade **unidade, Arquivo **arqAb
 		if (*arqAberto == NULL) {
 			printf("Nenhum arquivo aberto\n");
 		}else {
-			return ListFileData(*arqAberto);
+			return ListFileData(*arqAberto, *setDeleted);
 		}
 	}
 
@@ -131,15 +131,45 @@ void interpretarComando(char command[50][50], Unidade **unidade, Arquivo **arqAb
 			return ExcluirRegistrosZap(&(*arqAberto));
 		}
 	}
+
+	if (strcmp(command[0], "DELETE") == 0) {
+		if (*arqAberto == NULL) {
+			printf("Nenhum arquivo aberto\n");
+		}else if (strcmp(command[1], "ALL") == 0) {
+			DeletarTodosRegistrosLogico(&(*arqAberto));
+		}else {
+			DeletarRegistroLogico(&(*status));
+		}
+	}
+
+	if (strcmp(command[0], "RECALL") == 0) {
+		if (*arqAberto == NULL) {
+			printf("Nenhum arquivo aberto\n");
+		}else if (strcmp(command[1], "ALL") == 0) {
+			RecallTodosRegistrosLogico(&(*arqAberto));
+		}else {
+			RecallRegistroLogico(&(*status));
+		}
+	}
+
+	if (strcmp(command[0], "SET") == 0 && strcmp(command[1], "DELETED") == 0) {
+		if (strcmp(command[2], "OFF") == 0) {
+			*setDeleted = 0;
+		}else if (strcmp(command[2], "ON") == 0) {
+			*setDeleted = 1;
+		}
+	}
 }
 
 int main(){
 
 	Unidade *U;
-	char devMode = 1;
+	char devMode = 0;
 	char userInput[120];
 	char command[50][50];
+	int setDeleted = 0;
 	Arquivo *arqAberto = NULL;
+	Status *stsAtual = NULL;
 
 	Init(&U);
 
@@ -147,7 +177,7 @@ int main(){
 		fflush(stdin);
 		gets(userInput);
 		SalvarComando(command, userInput);
-		interpretarComando(command, &U, &arqAberto, devMode);
+		interpretarComando(command, &U, &arqAberto, devMode, &stsAtual, &setDeleted);
 	}
 
 	#ifdef _WIN32

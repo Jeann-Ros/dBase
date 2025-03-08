@@ -43,8 +43,7 @@ void InserirStatus(Arquivo **file) {
     Status *novoStatus = (Status*)malloc(sizeof(Status));
 
     novoStatus->Prox= NULL;
-    novoStatus->Val[0] = '0';
-    novoStatus->Val[1] = '\0';
+    strcpy(novoStatus->Val, "1");
 
     if (statusAtual == NULL) {
         (*file)->Sts = novoStatus;
@@ -70,9 +69,9 @@ void ExibirDadosFormatados(Campos *campo, Dados *dados) {
         printf("%s", dados->valType.M);
 }
 
-void LocalizarRegistro(Arquivo **file, int pos) {
+void LocalizarRegistro(Arquivo **file, int pos, Status **stsAtual) {
     Campos *campos = (*file)->Cmp;
-    int init = 1;
+    int init;
     char flag = '0';
 
     if (campos == NULL) {
@@ -80,6 +79,7 @@ void LocalizarRegistro(Arquivo **file, int pos) {
     }else {
         while (campos != NULL && flag == '0') {
             campos->Patual = campos->Pdados;
+            *stsAtual = (*file)->Sts;
             init = 1;
             if (campos->Pdados == NULL) {
                 flag = '1';
@@ -88,6 +88,7 @@ void LocalizarRegistro(Arquivo **file, int pos) {
                 while (init<pos && campos->Patual -> Prox != NULL) {
                     init++;
                     campos->Patual = campos->Patual->Prox;
+                    *stsAtual = (*stsAtual)->Prox;
                 }
                 campos = campos->Prox;
             }
@@ -236,3 +237,48 @@ void ExcluirRegistrosZap(Arquivo **file) {
     ExcludeStsRec(&(*file)->Sts);
     (*file)->Sts = NULL;
 }
+
+void DeletarRegistroLogico(Status **status) {
+    if (*status == NULL) {
+        printf("Nenhum registro selecionado.\n");
+        return;
+    }
+    strcpy((*status)->Val, "0");
+}
+
+void DeletarTodosRegistrosLogico(Arquivo **file) {
+    Status *status = (*file)->Sts;
+
+    if (status == NULL) {
+        printf("Nenhum registro selecionado.\n");
+        return;
+    }
+
+    while (status != NULL) {
+        DeletarRegistroLogico(&status);
+        status = status->Prox;
+    }
+}
+
+void RecallRegistroLogico(Status **status) {
+    if (*status == NULL) {
+        printf("Nenhum registro selecionado.\n");
+        return;
+    }
+    strcpy((*status)->Val, "1");
+}
+
+void RecallTodosRegistrosLogico(Arquivo **file) {
+    Status *status = (*file)->Sts;
+
+    if (status == NULL) {
+        printf("Nenhum registro selecionado.\n");
+        return;
+    }
+
+    while (status != NULL) {
+        RecallRegistroLogico(&status);
+        status = status->Prox;
+    }
+}
+

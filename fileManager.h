@@ -146,21 +146,24 @@ void AppendData(Arquivo *arqAberto) {
     }
 }
 
-void ListFileData(Arquivo *arqAberto) {
+void ListFileData(Arquivo *arqAberto, int setDeleted) {
     int aux = 1;
     int auxCont;
     int arquivoCount = QuantidadeDeRegistros(arqAberto);
+    Status *status = arqAberto->Sts;
 
     Campos *campos = NULL;
     Dados *dados = NULL;
     ExibirCabecalhoArquivo(arqAberto);
 
     while (aux <= arquivoCount) {
-        auxCont = 1;
         campos = arqAberto->Cmp;
-        printf("%d\t", aux);
+        if (strcmp(status->Val, "1") == 0 || setDeleted == 0) {
+            printf("%d\t", aux);
+        }
 
         while (campos != NULL) {
+            auxCont = 1;
             dados = campos->Pdados;
 
             while (auxCont < aux) {
@@ -168,12 +171,17 @@ void ListFileData(Arquivo *arqAberto) {
                 auxCont++;
             }
 
-            ExibirDadosFormatados(campos, dados);
-            printf("\t");
+            if (strcmp(status->Val, "1") == 0 || setDeleted == 0) {
+                ExibirDadosFormatados(campos, dados);
+                printf("\t");
+            }
 
             campos = campos->Prox;
         }
-        printf("\n");
+        if (strcmp(status->Val, "1") == 0 || setDeleted == 0) {
+            printf("\n");
+        }
+        status = status->Prox;
         aux++;
     }
 }
