@@ -45,12 +45,24 @@ void interpretarComando(char command[50][50], Unidade **unidade, Arquivo **arqAb
     	return ExibirUnidade(*unidade);
     }
 
-	if (strcmp(command[0], "LIST") == 0 && strcmp(command[1], "FOR") == 0 && strcmp(command[3], "=") == 0 ) {
+	if (strcmp(command[0], "LOCATE") == 0 && strcmp(command[1], "FOR") == 0 && strcmp(command[3], "=") == 0 ) {
 		if (*arqAberto == NULL) {
 			printf("Nenhum arquivo aberto\n");
 		}else if (validarValorDeBusca(command[4])) {
 			removeQuotes(command[4]);
 			return SearchForFieldValue(command[2], command[4], *arqAberto);
+		}
+		else{
+			printf("Valor de buscas invalido\n");
+		}
+	}
+
+	if (strcmp(command[0], "LIST") == 0 && strcmp(command[1], "FOR") == 0 && strcmp(command[3], "=") == 0 ) {
+		if (*arqAberto == NULL) {
+			printf("Nenhum arquivo aberto\n");
+		}else if (validarValorDeBusca(command[4])) {
+			removeQuotes(command[4]);
+			return SearchForFieldMatch(command[2], command[4], *arqAberto);
 		}
 		else{
 			printf("Valor de buscas invalido\n");
@@ -164,7 +176,7 @@ void interpretarComando(char command[50][50], Unidade **unidade, Arquivo **arqAb
 int main(){
 
 	Unidade *U;
-	char devMode = 0;
+	char devMode = 1;
 	char userInput[120];
 	char command[50][50];
 	int setDeleted = 0;

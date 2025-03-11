@@ -236,9 +236,62 @@ void SearchForFieldValue(char *fieldName, char *searchText, Arquivo *arqAberto) 
             ExibirDadosFormatados(campo, dados);
             printf("\t");
         }
-        printf("\n");
 
         campo = campo->Prox;
     }
+    printf("\n");
+}
 
+void SearchForFieldMatch(char *fieldName, char *searchText, Arquivo *arqAberto) {
+    Campos *campo = FindFileField(arqAberto, fieldName);
+    int posicao_dado = 0;
+    int aux = 0;
+    int listaRegistros[100];
+    int listaRegistrosTL = 0;
+
+    if (campo == NULL) {
+        printf("Campo nao encontrado\n");
+        return;
+    }
+
+    if (campo->Type[0] != 'C') {
+        printf("Campo nao e do tipo Caractere\n");
+        return;
+    }
+
+    Dados *dados = campo->Pdados;
+    while (dados != NULL) {
+        if (strstr(dados->valType.C, searchText) != NULL) {
+            listaRegistros[listaRegistrosTL++] = posicao_dado;
+        }
+        dados = dados->Prox;
+        posicao_dado++;
+    }
+
+    if (listaRegistrosTL == 0) {
+        printf("Nenhum registro encontrado\n");
+        return;
+    }
+
+    ExibirCabecalhoArquivo(arqAberto);
+    for (int i = 0; i < listaRegistrosTL; i++) {
+        campo = arqAberto->Cmp;
+        printf("%d\t", listaRegistros[i] + 1);
+        while (campo != NULL) {
+            aux = 0;
+            dados = campo->Pdados;
+            while (aux < listaRegistros[i]) {
+                dados = dados->Prox;
+                aux++;
+            }
+
+            if (aux == listaRegistros[i]) {
+                ExibirDadosFormatados(campo, dados);
+                printf("\t");
+            }
+
+            campo = campo->Prox;
+        }
+        printf("\n");
+    }
 }
