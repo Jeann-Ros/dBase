@@ -111,7 +111,7 @@ void AppendData(Arquivo *arqAberto) {
 
     printf("Iniciando insercao de dados no arquivo %s\n",arqAberto->NomeDBF);
     while (campos != NULL) {
-        printf("Digite o valor do campo: %s do tipo %s e tamanho %d\n", campos->FieldName, campos->Type, campos->Width);
+        printf("Digite o valor do campo: %s do tipo %c\n", campos->FieldName, campos->Type[0]);
 
         if (campos->Type[0] == 'N') {
             fflush(stdin);

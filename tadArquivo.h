@@ -57,8 +57,11 @@ void InserirStatus(Arquivo **file) {
 }
 
 void ExibirDadosFormatados(Campos *campo, Dados *dados) {
-    if (campo->Type[0] == 'N')
-        printf("%.2f", dados->valType.N);
+    if (campo->Type[0] == 'N') {
+        char format[10];
+        sprintf(format, "%%.%df", campo->Dec);
+        printf(format, dados->valType.N);
+    }
     if (campo->Type[0] == 'D')
         printf("%s", dados->valType.D);
     if (campo->Type[0] == 'L')
@@ -109,8 +112,10 @@ void MostrarRegistro(Arquivo *file) {
         }
         printf("\n");
         while (campos != NULL) {
-            if (campos->Type[0] == 'N')
-                printf("%.2f \t", campos->Patual->valType.N);
+            if (campos->Type[0] == 'N') {
+                ExibirDadosFormatados(campos, campos->Patual);
+                printf("\t");
+            }
             if (campos->Type[0] == 'D')
                 printf("%s \t", campos->Patual->valType.D);
             if (campos->Type[0] == 'L')
